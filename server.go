@@ -1,17 +1,21 @@
 package main
 
 import (
+	"ControlServer/graph"
+	"ControlServer/graph/generated"
 	"fmt"
-	"github.com/gorilla/websocket"
 	"log"
 	"net/http"
+	"os"
+
+	"github.com/99designs/gqlgen/graphql/handler"
+	"github.com/99designs/gqlgen/graphql/playground"
+	"github.com/gorilla/websocket"
 )
 
-var upgrader = websocket.Upgrader{}
+const defaultPort = "8081"
 
-func homePage(w http.ResponseWriter, r *http.Request) {
-	_, _ = fmt.Fprintf(w, "Home Page")
-}
+var upgrader = websocket.Upgrader{}
 
 func reader(conn *websocket.Conn) {
 	for {
@@ -47,13 +51,18 @@ func wsEndpoint(w http.ResponseWriter, r *http.Request) {
 	reader(ws)
 }
 
-func setupRoutes() {
-	http.HandleFunc("/", homePage)
-	http.HandleFunc("/ws", wsEndpoint)
-}
-
 func main() {
-	fmt.Println("Hello World")
-	setupRoutes()
-	log.Fatal(http.ListenAndServe(":8081", nil))
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = defaultPort
+	}
+
+	srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{}}))
+
+	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
+	http.Handle("/query", srv)
+	http.HandleFunc("/ws", wsEndpoint)
+
+	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
+	log.Fatal(http.ListenAndServe(":"+port, nil))
 }

@@ -1,0 +1,25 @@
+# GraphQL schema example
+#
+# https://gqlgen.com/getting-started/
+
+type Device {
+  _id: ID!
+}
+
+input Command {
+  deviceId: String!
+  command: String!
+}
+
+type CommandOutput {
+  code: Int!
+  output: String!
+}
+
+type Query {
+  devices: [Device!]!
+}
+
+type Mutation {
+  runCommand(input: Command!): CommandOutput!
+}
