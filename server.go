@@ -3,7 +3,8 @@ package main
 import (
 	"ControlServer/graph"
 	"ControlServer/graph/generated"
-	"fmt"
+	"ControlServer/internal/authDevice"
+	"encoding/json"
 	"log"
 	"net/http"
 	"os"
@@ -17,26 +18,54 @@ const defaultPort = "8081"
 
 var upgrader = websocket.Upgrader{}
 
-func reader(conn *websocket.Conn) {
+func readFromWebSocket(conn *websocket.Conn) {
 	for {
 		// read in a message
-		messageType, p, err := conn.ReadMessage()
+		messageType, messageBytes, err := conn.ReadMessage()
 
 		if err != nil {
 			log.Println(err)
 			return
 		}
 
-		// print out that message for clarity
-		fmt.Println(string(p))
-		message := []byte("From server: " + string(p))
+		var result map[string]interface{}
+		err = json.Unmarshal(messageBytes, &result)
 
-		if err := conn.WriteMessage(messageType, message); err != nil {
+		if err != nil {
 			log.Println(err)
 			return
 		}
 
+		method, ok := result["method"]
+
+		if !ok {
+			log.Println("no method field")
+			return
+		}
+
+		switch method {
+		case "auth":
+			err := authDevice.Auth(&result, messageType, conn)
+
+			if err != nil {
+				log.Println(err)
+				return
+			}
+
+			break
+		default:
+			message := []byte("unknown method")
+
+			if err := conn.WriteMessage(messageType, message); err != nil {
+				log.Println(err)
+				return
+			}
+		}
 	}
+}
+
+func sendError(conn *websocket.Conn) {
+
 }
 
 func wsEndpoint(w http.ResponseWriter, r *http.Request) {
@@ -48,7 +77,7 @@ func wsEndpoint(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 	}
 
-	reader(ws)
+	readFromWebSocket(ws)
 }
 
 func main() {
