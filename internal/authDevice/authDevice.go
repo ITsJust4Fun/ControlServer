@@ -12,8 +12,8 @@ func Auth(json *map[string]interface{}, messageType int, conn *websocket.Conn) e
 
 	if volumesInfo, ok := (*json)["Volumes Info"]; ok {
 		if volumes, ok := volumesInfo.(map[string]interface{})["Volume serial numbers"]; ok {
-			for _, volume := range volumes.([]string) {
-				log.Println("volume: " + volume)
+			for _, volume := range volumes.([]interface{}) {
+				log.Println("volume serial number: " + volume.(string))
 			}
 		}
 	}
