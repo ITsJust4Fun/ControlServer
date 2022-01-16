@@ -20,12 +20,14 @@ func Auth(json *map[string]interface{}, messageType int, conn *websocket.Conn) e
 
 	if biosInfo, ok := (*json)["BIOS Info"]; ok {
 		for key, value := range biosInfo.(map[string]interface{}) {
-			log.Println(key + ": " + value.(string))
+			if key == "Some data" {
+				for _, data := range value.([]interface{}) {
+					log.Println("Some data: " + data.(string))
+				}
+			} else {
+				log.Println(key + ": " + value.(string))
+			}
 		}
-	}
-
-	if value, ok := (*json)["Some data"]; ok {
-		log.Println("Some data: " + value.(string))
 	}
 
 	message := []byte("Ok")
