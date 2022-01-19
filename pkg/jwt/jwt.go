@@ -2,7 +2,7 @@ package jwt
 
 import (
 	"ControlServer/pkg/config"
-	"github.com/dgrijalva/jwt-go"
+	"github.com/golang-jwt/jwt"
 	"github.com/pkg/errors"
 	"log"
 	"time"
