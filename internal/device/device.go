@@ -1,6 +1,7 @@
 package device
 
 import (
+	"ControlServer/pkg/database"
 	"encoding/json"
 	"github.com/gorilla/websocket"
 	"log"
@@ -148,10 +149,14 @@ func Auth(messageBytes []byte, messageType int, conn *websocket.Conn) error {
 		return err
 	}
 
-	test, _ := json.Marshal(authRequest)
-	log.Println(string(test))
+	id, err := database.InsertOne(authRequest.DeviceInfo, "device")
 
-	message := []byte("ok")
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+
+	message := []byte(id)
 
 	if err = conn.WriteMessage(messageType, message); err != nil {
 		log.Println(err)

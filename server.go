@@ -4,6 +4,7 @@ import (
 	"ControlServer/graph"
 	"ControlServer/graph/generated"
 	"ControlServer/internal/device"
+	"ControlServer/pkg/config"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -13,8 +14,6 @@ import (
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/gorilla/websocket"
 )
-
-const defaultPort = "8081"
 
 var upgrader = websocket.Upgrader{}
 
@@ -81,9 +80,12 @@ func wsEndpoint(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	config.ReadConfigFile()
+	conf := config.GetConfig()
+
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = defaultPort
+		port = conf.Port
 	}
 
 	srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{}}))
