@@ -3,7 +3,7 @@ package main
 import (
 	"ControlServer/graph"
 	"ControlServer/graph/generated"
-	"ControlServer/internal/authDevice"
+	"ControlServer/internal/device"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -45,7 +45,7 @@ func readFromWebSocket(conn *websocket.Conn) {
 
 		switch method {
 		case "auth":
-			err := authDevice.Auth(&result, messageType, conn)
+			err := device.Auth(messageBytes, messageType, conn)
 
 			if err != nil {
 				log.Println(err)
