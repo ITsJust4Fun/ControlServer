@@ -31,8 +31,18 @@ func SetFieldToInterface(input interface{}, fieldName string, value interface{})
 	tmp := reflect.New(valueInterface.Elem().Elem().Type()).Elem()
 	tmp.Set(valueInterface.Elem().Elem())
 	tmp.FieldByName(fieldName).Set(reflect.ValueOf(value))
+	CloneValueToPointer(tmp.Interface(), input)
 
 	return tmp.Interface()
+}
+
+func CloneValueToPointer(source interface{}, destination interface{}) {
+	x := reflect.ValueOf(source)
+	starX := x
+	y := reflect.New(starX.Type())
+	starY := y.Elem()
+	starY.Set(starX)
+	reflect.ValueOf(destination).Elem().Set(y.Elem())
 }
 
 func connect(collectionName string) (*ConnectionControl, func(), error) {
@@ -73,9 +83,6 @@ func CreateNewDocument(input interface{}, collectionName string) error {
 
 	inputWithId := SetFieldToInterface(input, "ID", primitive.NewObjectID())
 	_, err = collectionControl.collection.InsertOne(collectionControl.ctx, inputWithId)
-
-	inputInterface := reflect.ValueOf(&input).Elem()
-	inputInterface.Set(reflect.ValueOf(inputWithId))
 
 	if err != nil {
 		log.Print("Error when inserting", err)

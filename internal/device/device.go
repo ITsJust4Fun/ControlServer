@@ -58,10 +58,10 @@ type BiosInfo struct {
 	StartingSegment              string             `json:"starting_segment" bson:"starting_segment"`
 	ReleaseDate                  string             `json:"release_date" bson:"release_date"`
 	ROMSize                      string             `json:"rom_size" bson:"rom_size"`
-	SystemBIOSMajorRelease       string             `json:"system_bios_major_release" bson:"system_bios_major_release"`
-	SystemBIOSMinorRelease       string             `json:"system_bios_minor_release" bson:"system_bios_minor_release"`
-	EmbeddedFirmwareMajorRelease string             `json:"embedded_firmware_major_release" bson:"embedded_firmware_major_release"`
-	EmbeddedFirmwareMinorRelease string             `json:"embedded_firmware_minor_release" bson:"embedded_firmware_minor_release"`
+	SystemBIOSMajorRelease       string             `json:"system_bios_major_release" bson:"bios_major_release"`
+	SystemBIOSMinorRelease       string             `json:"system_bios_minor_release" bson:"bios_minor_release"`
+	EmbeddedFirmwareMajorRelease string             `json:"embedded_firmware_major_release" bson:"ef_major_release"`
+	EmbeddedFirmwareMinorRelease string             `json:"embedded_firmware_minor_release" bson:"ef_minor_release"`
 }
 
 type SysInfo struct {
@@ -133,7 +133,7 @@ type MemoryInfo struct {
 	PartNumber           string             `json:"part_number" bson:"part_number"`
 	Size                 string             `json:"size" bson:"size"`
 	ExtendedSize         string             `json:"extended_size" bson:"extended_size"`
-	ConfiguredClockSpeed string             `json:"configured_clock_speed" bson:"configured_clock_speed"`
+	ConfiguredClockSpeed string             `json:"configured_clock_speed" bson:"conf_clock_speed"`
 }
 
 type OemstringsInfo struct {
@@ -152,7 +152,8 @@ func Auth(messageBytes []byte, messageType int, conn *websocket.Conn) error {
 		return err
 	}
 
-	err = database.CreateNewDocument(&authRequest.DeviceInfo, "device")
+	device := &authRequest.DeviceInfo
+	err = database.CreateNewDocument(device, "device")
 
 	if err != nil {
 		log.Println(err)
