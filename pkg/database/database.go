@@ -61,7 +61,7 @@ func CreateNewDocument(input interface{}, collectionName string) error {
 		return err
 	}
 
-	setFieldToInterface(&input, "ID", primitive.NewObjectID())
+	setFieldToInterface(input.(*interface{}), "ID", primitive.NewObjectID())
 
 	_, err = collectionControl.collection.InsertOne(collectionControl.ctx, input)
 
