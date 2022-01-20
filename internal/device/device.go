@@ -178,8 +178,8 @@ func CreateSmbiosDocuments(smbios interface{}) error {
 		array := value.Field(i)
 		arrayType := valueType.Field(i)
 
-		for j := 0; j < array.Len(); i++ {
-			biosInfo := array.Index(i)
+		for j := 0; j < array.Len(); j++ {
+			biosInfo := array.Index(j)
 			err := database.CreateNewDocument(biosInfo.Interface(), string(arrayType.Tag))
 
 			if err != nil {
