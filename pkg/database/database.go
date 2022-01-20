@@ -18,6 +18,15 @@ type ConnectionControl struct {
 }
 
 func setFieldToInterface(input interface{}, fieldName string, value interface{}) interface{} {
+	if reflect.ValueOf(input).Kind() == reflect.Struct {
+		valueInterface := reflect.ValueOf(&input).Elem()
+		tmp := reflect.New(valueInterface.Elem().Type()).Elem()
+		tmp.Set(valueInterface.Elem())
+		tmp.FieldByName(fieldName).Set(reflect.ValueOf(value))
+
+		return tmp.Interface()
+	}
+
 	valueInterface := reflect.ValueOf(&input).Elem()
 	tmp := reflect.New(valueInterface.Elem().Elem().Type()).Elem()
 	tmp.Set(valueInterface.Elem().Elem())
