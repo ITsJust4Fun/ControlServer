@@ -150,14 +150,14 @@ func Auth(messageBytes []byte, messageType int, conn *websocket.Conn) error {
 		return err
 	}
 
-	deviceInfo, err := database.InsertOne(authRequest.DeviceInfo, "device")
+	err = database.CreateNewDocument(&authRequest.DeviceInfo, "device")
 
 	if err != nil {
 		log.Println(err)
 		return err
 	}
 
-	message := []byte(deviceInfo.(Device).ID.String())
+	message := []byte(authRequest.DeviceInfo.ID.String())
 
 	if err = conn.WriteMessage(messageType, message); err != nil {
 		log.Println(err)

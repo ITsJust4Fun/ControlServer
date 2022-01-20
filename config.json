@@ -1,6 +1,7 @@
 {
   "port": "8081",
   "database_uri": "mongodb://127.0.0.1:27017",
+  "database_name": "control_server",
   "database_timeout": 30,
   "token_expires": 15,
   "refresh_token_expires": 24,
