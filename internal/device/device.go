@@ -182,7 +182,7 @@ func CreateSmbiosDocuments(smbios interface{}, deviceId primitive.ObjectID) erro
 		for j := 0; j < array.Len(); j++ {
 			biosSec := array.Index(j)
 			collectionName := string(arrayType.Tag)
-			collectionName = strings.Replace(collectionName, `json`, "", -1)
+			collectionName = strings.Replace(collectionName, `json:`, "", -1)
 			collectionName = strings.Replace(collectionName, `"`, "", -1)
 
 			biosSecInterface := database.SetFieldToInterface(biosSec.Interface(), "DeviceId", deviceId)
