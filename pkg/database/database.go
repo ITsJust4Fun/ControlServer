@@ -18,10 +18,6 @@ type ConnectionControl struct {
 }
 
 func setFieldToInterface(input interface{}, fieldName string, value interface{}) interface{} {
-	log.Println(reflect.ValueOf(&input).Type().String())
-	log.Println(reflect.ValueOf(&input).Elem().Type().String())
-	log.Println(reflect.ValueOf(&input).Elem().Elem().Type().String())
-	log.Println(reflect.ValueOf(&input).Elem().Elem().Elem().Type().String())
 	valueInterface := reflect.ValueOf(&input).Elem()
 	tmp := reflect.New(valueInterface.Elem().Elem().Type()).Elem()
 	tmp.Set(valueInterface.Elem().Elem())
@@ -59,6 +55,8 @@ func connect(collectionName string) (*ConnectionControl, func(), error) {
 }
 
 func CreateNewDocument(input interface{}, collectionName string) error {
+	log.Println(collectionName)
+
 	collectionControl, disconnect, err := connect(collectionName)
 	defer disconnect()
 

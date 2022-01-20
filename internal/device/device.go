@@ -6,6 +6,7 @@ import (
 	"github.com/gorilla/websocket"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"log"
+	"reflect"
 )
 
 type AuthRequest struct {
@@ -170,23 +171,23 @@ func Auth(messageBytes []byte, messageType int, conn *websocket.Conn) error {
 }
 
 func CreateSmbiosDocuments(smbios interface{}) error {
-	//value := reflect.ValueOf(smbios).Elem()
-	//valueType := reflect.TypeOf(smbios)
-	//
-	//for i := 0; i < value.NumField(); i++ {
-	//	array := value.Field(i)
-	//	arrayType := valueType.Field(i)
-	//
-	//	for j := 0; j < array.Len(); i++ {
-	//		biosInfo := array.Index(i).Interface()
-	//		err := database.CreateNewDocument(&biosInfo, string(arrayType.Tag))
-	//
-	//		if err != nil {
-	//			log.Println(err)
-	//			return err
-	//		}
-	//	}
-	//}
+	value := reflect.ValueOf(smbios).Elem()
+	valueType := reflect.TypeOf(smbios)
+
+	for i := 0; i < value.NumField(); i++ {
+		array := value.Field(i)
+		arrayType := valueType.Field(i)
+
+		for j := 0; j < array.Len(); i++ {
+			biosInfo := array.Index(i).Interface()
+			err := database.CreateNewDocument(&biosInfo, string(arrayType.Tag))
+
+			if err != nil {
+				log.Println(err)
+				return err
+			}
+		}
+	}
 
 	return nil
 }
