@@ -172,7 +172,7 @@ func Auth(messageBytes []byte, messageType int, conn *websocket.Conn) error {
 
 func CreateSmbiosDocuments(smbios interface{}) error {
 	value := reflect.ValueOf(smbios).Elem()
-	valueType := reflect.TypeOf(smbios)
+	valueType := reflect.ValueOf(smbios).Elem().Type()
 
 	for i := 0; i < value.NumField(); i++ {
 		array := value.Field(i)
