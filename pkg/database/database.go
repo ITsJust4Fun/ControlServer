@@ -56,6 +56,7 @@ func connect(collectionName string) (*ConnectionControl, func(), error) {
 
 func CreateNewDocument(input interface{}, collectionName string) error {
 	log.Println(collectionName)
+	log.Println(reflect.ValueOf(input).Type().String())
 
 	collectionControl, disconnect, err := connect(collectionName)
 	defer disconnect()
