@@ -11,7 +11,7 @@ import (
 )
 
 func setFieldToInterface(input *interface{}, fieldName string, value interface{}) {
-	valueInterface := reflect.ValueOf(&input).Elem()
+	valueInterface := reflect.ValueOf(input).Elem()
 	tmp := reflect.New(valueInterface.Elem().Type()).Elem()
 	tmp.Set(valueInterface.Elem())
 	tmp.FieldByName(fieldName).Set(reflect.ValueOf(value))
