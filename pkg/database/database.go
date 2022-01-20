@@ -18,9 +18,9 @@ type ConnectionControl struct {
 }
 
 func setFieldToInterface(input interface{}, fieldName string, value interface{}) {
-	valueInterface := reflect.ValueOf(input).Elem()
-	tmp := reflect.New(valueInterface.Type()).Elem()
-	tmp.Set(valueInterface)
+	valueInterface := reflect.ValueOf(input)
+	tmp := reflect.New(valueInterface.Elem().Type()).Elem()
+	tmp.Set(valueInterface.Elem())
 	tmp.FieldByName(fieldName).Set(reflect.ValueOf(value))
 	valueInterface.Set(tmp)
 }
@@ -41,7 +41,7 @@ func connect(collectionName string) (*ConnectionControl, func(), error) {
 		return nil, func() {}, err
 	}
 
-	collection := client.Database(conf.DatabaseName).Collection(collectionName)
+	collection := client.Database("control_server").Collection(collectionName)
 	err = client.Connect(ctx)
 
 	if err != nil {
