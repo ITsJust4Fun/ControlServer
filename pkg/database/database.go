@@ -24,7 +24,7 @@ func setFieldToInterface(input interface{}, fieldName string, value interface{})
 	log.Println(reflect.ValueOf(&input).Elem().Elem().Elem().Type().String())
 	valueInterface := reflect.ValueOf(&input).Elem()
 	tmp := reflect.New(valueInterface.Elem().Elem().Type()).Elem()
-	tmp.Set(valueInterface)
+	tmp.Set(valueInterface.Elem().Elem())
 	tmp.FieldByName(fieldName).Set(reflect.ValueOf(value))
 	valueInterface.Set(tmp)
 }
