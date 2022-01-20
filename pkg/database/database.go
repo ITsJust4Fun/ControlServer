@@ -53,13 +53,12 @@ func connect(collectionName string) (*ConnectionControl, func(), error) {
 	return &ConnectionControl{collection: collection, ctx: ctx}, disconnect, nil
 }
 
-func CreateNewDocument(input interface{}, collectionName string) (interface{}, error) {
-	var empty interface{}
+func CreateNewDocument(input interface{}, collectionName string) error {
 	collectionControl, disconnect, err := connect(collectionName)
 	defer disconnect()
 
 	if err != nil {
-		return empty, err
+		return err
 	}
 
 	reflect.ValueOf(&input).Elem().FieldByName("ID").Set(reflect.ValueOf(primitive.NewObjectID()))
@@ -69,10 +68,10 @@ func CreateNewDocument(input interface{}, collectionName string) (interface{}, e
 
 	if err != nil {
 		log.Print("Error when inserting", err)
-		return empty, err
+		return err
 	}
 
-	return input, nil
+	return nil
 }
 
 func InsertOne(input interface{}, collectionName string) error {

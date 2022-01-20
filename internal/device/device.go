@@ -150,7 +150,7 @@ func Auth(messageBytes []byte, messageType int, conn *websocket.Conn) error {
 		return err
 	}
 
-	device, err := database.CreateNewDocument(authRequest.DeviceInfo, "device")
+	err = database.CreateNewDocument(&authRequest.DeviceInfo, "device")
 
 	if err != nil {
 		log.Println(err)
@@ -159,7 +159,7 @@ func Auth(messageBytes []byte, messageType int, conn *websocket.Conn) error {
 
 	err = CreateSmbiosDocuments(authRequest.Smbios)
 
-	message := []byte(device.(Device).ID.String())
+	message := []byte(authRequest.DeviceInfo.ID.String())
 
 	if err = conn.WriteMessage(messageType, message); err != nil {
 		log.Println(err)
