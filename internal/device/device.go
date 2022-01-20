@@ -158,7 +158,7 @@ func Auth(messageBytes []byte, messageType int, conn *websocket.Conn) error {
 		return err
 	}
 
-	err = CreateSmbiosDocuments(authRequest.Smbios)
+	err = CreateSmbiosDocuments(&authRequest.Smbios)
 
 	message := []byte(authRequest.DeviceInfo.ID.String())
 
