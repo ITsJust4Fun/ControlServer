@@ -18,9 +18,6 @@ type ConnectionControl struct {
 }
 
 func SetFieldToInterface(input interface{}, fieldName string, value interface{}) interface{} {
-	log.Println(reflect.ValueOf(input).Type().String())
-	log.Println(reflect.ValueOf(input).Kind().String())
-
 	if reflect.ValueOf(input).Kind() == reflect.Struct {
 		valueInterface := reflect.ValueOf(&input).Elem()
 		tmp := reflect.New(valueInterface.Elem().Type()).Elem()
@@ -76,6 +73,9 @@ func CreateNewDocument(input interface{}, collectionName string) error {
 
 	inputWithId := SetFieldToInterface(input, "ID", primitive.NewObjectID())
 	_, err = collectionControl.collection.InsertOne(collectionControl.ctx, inputWithId)
+
+	inputInterface := reflect.ValueOf(&input).Elem()
+	inputInterface.Set(reflect.ValueOf(inputWithId))
 
 	if err != nil {
 		log.Print("Error when inserting", err)
