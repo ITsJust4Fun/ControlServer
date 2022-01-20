@@ -40,7 +40,7 @@ func InsertOne(input interface{}, collectionName string) (interface{}, error) {
 		return empty, err
 	}
 
-	id := reflect.ValueOf(&input).Elem().FieldByName("ID")
+	id := reflect.ValueOf(&input).Elem().Elem().FieldByName("ID")
 
 	if id.IsValid() {
 		id.Set(reflect.ValueOf(primitive.NewObjectID()))
