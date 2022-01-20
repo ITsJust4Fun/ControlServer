@@ -7,6 +7,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"log"
 	"reflect"
+	"strings"
 )
 
 type AuthRequest struct {
@@ -158,7 +159,7 @@ func Auth(messageBytes []byte, messageType int, conn *websocket.Conn) error {
 		return err
 	}
 
-	err = CreateSmbiosDocuments(&authRequest.Smbios)
+	err = CreateSmbiosDocuments(&authRequest.Smbios, authRequest.DeviceInfo.ID)
 
 	message := []byte(authRequest.DeviceInfo.ID.String())
 
@@ -170,7 +171,7 @@ func Auth(messageBytes []byte, messageType int, conn *websocket.Conn) error {
 	return nil
 }
 
-func CreateSmbiosDocuments(smbios interface{}) error {
+func CreateSmbiosDocuments(smbios interface{}, deviceId primitive.ObjectID) error {
 	value := reflect.ValueOf(smbios).Elem()
 	valueType := reflect.ValueOf(smbios).Elem().Type()
 
@@ -179,8 +180,14 @@ func CreateSmbiosDocuments(smbios interface{}) error {
 		arrayType := valueType.Field(i)
 
 		for j := 0; j < array.Len(); j++ {
-			biosInfo := array.Index(j)
-			err := database.CreateNewDocument(biosInfo.Interface(), string(arrayType.Tag))
+			biosSec := array.Index(j)
+			collectionName := string(arrayType.Tag)
+			collectionName = strings.Replace(collectionName, `json`, "", -1)
+			collectionName = strings.Replace(collectionName, `"`, "", -1)
+
+			biosSecInterface := database.SetFieldToInterface(biosSec.Interface(), "DeviceId", deviceId)
+
+			err := database.CreateNewDocument(biosSecInterface, collectionName)
 
 			if err != nil {
 				log.Println(err)
