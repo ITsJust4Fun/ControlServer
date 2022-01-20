@@ -19,8 +19,8 @@ type ConnectionControl struct {
 
 func setFieldToInterface(input interface{}, fieldName string, value interface{}) {
 	valueInterface := reflect.ValueOf(input).Elem()
-	tmp := reflect.New(valueInterface.Elem().Type()).Elem()
-	tmp.Set(valueInterface.Elem())
+	tmp := reflect.New(valueInterface.Type()).Elem()
+	tmp.Set(valueInterface)
 	tmp.FieldByName(fieldName).Set(reflect.ValueOf(value))
 	valueInterface.Set(tmp)
 }
