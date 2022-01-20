@@ -26,7 +26,7 @@ func setFieldToInterface(input interface{}, fieldName string, value interface{})
 	tmp := reflect.New(valueInterface.Elem().Elem().Type()).Elem()
 	tmp.Set(valueInterface.Elem().Elem())
 	tmp.FieldByName(fieldName).Set(reflect.ValueOf(value))
-	valueInterface.Elem().Elem().Set(tmp)
+	valueInterface.Elem().Set(tmp)
 }
 
 func connect(collectionName string) (*ConnectionControl, func(), error) {
