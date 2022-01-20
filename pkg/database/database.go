@@ -41,7 +41,7 @@ func connect(collectionName string) (*ConnectionControl, func(), error) {
 		return nil, func() {}, err
 	}
 
-	collection := client.Database("control_server").Collection(collectionName)
+	collection := client.Database(conf.DatabaseName).Collection(collectionName)
 	err = client.Connect(ctx)
 
 	if err != nil {
