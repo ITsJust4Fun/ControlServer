@@ -3,13 +3,20 @@ package database
 import (
 	"ControlServer/pkg/config"
 	"context"
-	"github.com/pkg/errors"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
 	"reflect"
 )
+
+func setFieldToInterface(input *interface{}, fieldName string, value interface{}) {
+	valueInterface := reflect.ValueOf(&input).Elem()
+	tmp := reflect.New(valueInterface.Elem().Type()).Elem()
+	tmp.Set(valueInterface.Elem())
+	tmp.FieldByName(fieldName).Set(reflect.ValueOf(value))
+	valueInterface.Set(tmp)
+}
 
 func InsertOne(input interface{}, collectionName string) (interface{}, error) {
 	var empty interface{}
@@ -40,13 +47,7 @@ func InsertOne(input interface{}, collectionName string) (interface{}, error) {
 		return empty, err
 	}
 
-	id := reflect.ValueOf(&input).Elem().Elem().FieldByName("ID")
-
-	if id.IsValid() {
-		id.Set(reflect.ValueOf(primitive.NewObjectID()))
-	} else {
-		return empty, errors.New("No id field!")
-	}
+	setFieldToInterface(&input, "ID", primitive.NewObjectID())
 
 	_, err = collection.InsertOne(ctx, input)
 
