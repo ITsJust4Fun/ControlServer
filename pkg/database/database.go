@@ -45,6 +45,15 @@ func CloneValueToPointer(source interface{}, destination interface{}) {
 	reflect.ValueOf(destination).Elem().Set(y.Elem())
 }
 
+func ClonePointerToPointer(source interface{}, destination interface{}) {
+	x := reflect.ValueOf(source)
+	starX := x.Elem()
+	y := reflect.New(starX.Type())
+	starY := y.Elem()
+	starY.Set(starX)
+	reflect.ValueOf(destination).Elem().Set(y.Elem())
+}
+
 func connect(collectionName string) (*ConnectionControl, func(), error) {
 	conf := config.GetConfig()
 	ctx, cancel := context.WithTimeout(context.Background(), conf.DatabaseTimeout)
@@ -92,7 +101,7 @@ func CreateNewDocument(input interface{}, collectionName string) error {
 	return nil
 }
 
-func InsertOne(input interface{}, collectionName string) error {
+func UpdateOne(input interface{}, update interface{}, collectionName string) error {
 	collectionControl, disconnect, err := connect(collectionName)
 	defer disconnect()
 
@@ -100,17 +109,20 @@ func InsertOne(input interface{}, collectionName string) error {
 		return err
 	}
 
-	_, err = collectionControl.collection.InsertOne(collectionControl.ctx, input)
+	idValue := reflect.ValueOf(input).Elem().FieldByName("ID")
+	id := idValue.Interface().(primitive.ObjectID)
+
+	_, err = collectionControl.collection.UpdateOne(collectionControl.ctx, bson.M{"_id": id}, update)
 
 	if err != nil {
-		log.Print("Error when inserting", err)
+		log.Print("Error when updating", err)
 		return err
 	}
 
 	return nil
 }
 
-func FindOne(input interface{}, filter bson.M, collectionName string) error {
+func FindOne(input interface{}, filter interface{}, collectionName string) error {
 	collectionControl, disconnect, err := connect(collectionName)
 	defer disconnect()
 
@@ -165,7 +177,7 @@ func RemoveOne(input interface{}, collectionName string) error {
 		return err
 	}
 
-	idValue := reflect.ValueOf(input).Elem().Elem().FieldByName("ID")
+	idValue := reflect.ValueOf(input).Elem().FieldByName("ID")
 	id := idValue.Interface().(primitive.ObjectID)
 
 	result, err := collectionControl.collection.DeleteOne(
@@ -183,4 +195,22 @@ func RemoveOne(input interface{}, collectionName string) error {
 	}
 
 	return nil
+}
+
+func RemoveByFilter(filter interface{}, collectionName string) (int64, error) {
+	collectionControl, disconnect, err := connect(collectionName)
+	defer disconnect()
+
+	if err != nil {
+		return 0, err
+	}
+
+	result, err := collectionControl.collection.DeleteMany(collectionControl.ctx, filter)
+
+	if err != nil {
+		log.Print("Error when removing", err)
+		return 0, err
+	}
+
+	return result.DeletedCount, nil
 }

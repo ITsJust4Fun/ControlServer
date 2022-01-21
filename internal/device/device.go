@@ -2,8 +2,10 @@ package device
 
 import (
 	"ControlServer/pkg/database"
+	"ControlServer/pkg/jwt"
 	"encoding/json"
 	"github.com/gorilla/websocket"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"log"
 	"reflect"
@@ -152,17 +154,57 @@ func Auth(messageBytes []byte, messageType int, conn *websocket.Conn) error {
 		return err
 	}
 
-	device := &authRequest.DeviceInfo
-	err = database.CreateNewDocument(device, "device")
+	authRequest.DeviceInfo.GetDeviceId()
 
-	if err != nil {
-		log.Println(err)
-		return err
+	isUpdateDevice := authRequest.DeviceInfo.ID.IsZero()
+
+	if !isUpdateDevice && !authRequest.DeviceInfo.IsTokenValid() {
+		RemoveSmbiosDocuments(authRequest.DeviceInfo.ID)
+		err = database.RemoveOne(&authRequest.DeviceInfo, "device")
+
+		if err != nil {
+			return err
+		}
+
+		isUpdateDevice = true
 	}
 
-	err = CreateSmbiosDocuments(&authRequest.Smbios, authRequest.DeviceInfo.ID)
+	if isUpdateDevice {
+		authRequest.DeviceInfo.IsVM = authRequest.Smbios.IsVM()
+		err = database.CreateNewDocument(&authRequest.DeviceInfo, "device")
 
-	message := []byte(authRequest.DeviceInfo.ID.String())
+		if err != nil {
+			log.Println(err)
+			return err
+		}
+
+		err = authRequest.DeviceInfo.SetToken()
+
+		if err != nil {
+			log.Println(err)
+			return err
+		}
+
+		err = database.UpdateOne(&authRequest.DeviceInfo,
+			bson.D{
+				{"$set", bson.D{{"token", authRequest.DeviceInfo.Token}}},
+			},
+			"device")
+
+		if err != nil {
+			log.Println(err)
+			return err
+		}
+
+		err = CreateSmbiosDocuments(&authRequest.Smbios, authRequest.DeviceInfo.ID)
+
+		if err != nil {
+			log.Println(err)
+			return err
+		}
+	}
+
+	message := []byte(authRequest.DeviceInfo.Token)
 
 	if err = conn.WriteMessage(messageType, message); err != nil {
 		log.Println(err)
@@ -182,10 +224,7 @@ func CreateSmbiosDocuments(smbios interface{}, deviceId primitive.ObjectID) erro
 
 		for j := 0; j < array.Len(); j++ {
 			biosSec := array.Index(j)
-			collectionName := string(arrayType.Tag)
-			collectionName = strings.Replace(collectionName, `json:`, "", -1)
-			collectionName = strings.Replace(collectionName, `"`, "", -1)
-
+			collectionName := GetCollectionNameByTag(string(arrayType.Tag))
 			biosSecInterface := database.SetFieldToInterface(biosSec.Interface(), "DeviceId", deviceId)
 
 			err := database.CreateNewDocument(biosSecInterface, collectionName)
@@ -198,4 +237,86 @@ func CreateSmbiosDocuments(smbios interface{}, deviceId primitive.ObjectID) erro
 	}
 
 	return nil
+}
+
+func RemoveSmbiosDocuments(deviceId primitive.ObjectID) {
+	var value SmbiosTable
+	reflectValue := reflect.ValueOf(value)
+	valueType := reflect.TypeOf(value)
+
+	for i := 0; i < reflectValue.NumField(); i++ {
+		arrayType := valueType.Field(i)
+		collectionName := GetCollectionNameByTag(string(arrayType.Tag))
+
+		_, _ = database.RemoveByFilter(bson.M{"device_id": deviceId}, collectionName)
+	}
+}
+
+func GetCollectionNameByTag(tag string) string {
+	tag = strings.Replace(tag, `json:`, "", -1)
+	tag = strings.Replace(tag, `"`, "", -1)
+
+	return tag
+}
+
+func (table *SmbiosTable) IsVM() bool {
+	for _, oemstring := range table.Oemstrings {
+		if strings.Contains(oemstring.Values, "Virtual Machine") {
+			return true
+		}
+	}
+
+	for _, sysinfo := range table.Sysinfo {
+		if strings.Contains(sysinfo.Manufacturer, "VMware") {
+			return true
+		}
+
+		if strings.Contains(sysinfo.ProductName, "VMware") {
+			return true
+		}
+	}
+
+	return false
+}
+
+func (device *Device) GetDeviceId() {
+	for _, volume := range device.Volumes {
+		deviceDecoded := &Device{}
+		err := database.FindOne(deviceDecoded, bson.M{"volumes": bson.A{volume}}, "device")
+
+		if err == nil {
+			device.ID = deviceDecoded.ID
+			device.Token = deviceDecoded.Token
+
+			return
+		}
+	}
+
+	return
+}
+
+func (device *Device) SetToken() error {
+	token, err := jwt.GenerateTokenForDevice(device.ID.String())
+
+	if err != nil {
+		return err
+	}
+
+	device.Token = token
+
+	return nil
+}
+
+func (device *Device) IsTokenValid() bool {
+	idString, err := jwt.ParseTokenForDevice(device.Token)
+
+	if err != nil {
+		return false
+	}
+
+	if idString == device.ID.String() {
+		return true
+	}
+
+	return false
 }
