@@ -196,7 +196,7 @@ func Auth(messageBytes []byte, messageType int, conn *websocket.Conn) error {
 			return err
 		}
 
-		err = CreateSmbiosDocuments(&authRequest.Smbios, authRequest.DeviceInfo.ID)
+		err = authRequest.Smbios.CreateSmbiosDocuments(authRequest.DeviceInfo.ID)
 
 		if err != nil {
 			log.Println(err)
@@ -214,9 +214,9 @@ func Auth(messageBytes []byte, messageType int, conn *websocket.Conn) error {
 	return nil
 }
 
-func CreateSmbiosDocuments(smbios interface{}, deviceId primitive.ObjectID) error {
-	value := reflect.ValueOf(smbios).Elem()
-	valueType := reflect.ValueOf(smbios).Elem().Type()
+func (table *SmbiosTable) CreateSmbiosDocuments(deviceId primitive.ObjectID) error {
+	value := reflect.ValueOf(table).Elem()
+	valueType := reflect.ValueOf(table).Elem().Type()
 
 	for i := 0; i < value.NumField(); i++ {
 		array := value.Field(i)
@@ -259,20 +259,34 @@ func GetCollectionNameByTag(tag string) string {
 	return tag
 }
 
-func (table *SmbiosTable) IsVM() bool {
-	for _, oemstring := range table.Oemstrings {
-		if strings.Contains(oemstring.Values, "Virtual Machine") {
+func IsVMString(value string) bool {
+	vmStrings := []string{"Virtual Machine", "VMware", "vbox", "VirtualBox"}
+
+	for _, vmString := range vmStrings {
+		if strings.Contains(value, vmString) {
 			return true
 		}
 	}
 
-	for _, sysinfo := range table.Sysinfo {
-		if strings.Contains(sysinfo.Manufacturer, "VMware") {
-			return true
-		}
+	return false
+}
 
-		if strings.Contains(sysinfo.ProductName, "VMware") {
-			return true
+func (table *SmbiosTable) IsVM() bool {
+	value := reflect.ValueOf(table).Elem()
+
+	for i := 0; i < value.NumField(); i++ {
+		array := value.Field(i)
+
+		for j := 0; j < array.Len(); j++ {
+			biosSec := array.Index(j)
+
+			for k := 0; k < biosSec.NumField(); k++ {
+				biosField := biosSec.Field(k)
+
+				if IsVMString(biosField.String()) {
+					return true
+				}
+			}
 		}
 	}
 
@@ -282,7 +296,7 @@ func (table *SmbiosTable) IsVM() bool {
 func (device *Device) GetDeviceId() {
 	for _, volume := range device.Volumes {
 		deviceDecoded := &Device{}
-		err := database.FindOne(deviceDecoded, bson.M{"volumes": bson.A{volume}}, "device")
+		err := database.FindOne(deviceDecoded, bson.M{"volumes": bson.M{"$all": bson.A{volume}}}, "device")
 
 		if err == nil {
 			device.ID = deviceDecoded.ID

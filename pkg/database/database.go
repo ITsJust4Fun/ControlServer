@@ -82,6 +82,41 @@ func connect(collectionName string) (*ConnectionControl, func(), error) {
 	return &ConnectionControl{collection: collection, ctx: ctx}, disconnect, nil
 }
 
+func Ping() bool {
+	conf := config.GetConfig()
+	ctx, cancel := context.WithTimeout(context.Background(), conf.DatabaseTimeout)
+	client, err := mongo.NewClient(options.Client().ApplyURI(conf.DatabaseURI))
+
+	disconnect := func() {
+		_ = client.Disconnect(ctx)
+		cancel()
+	}
+
+	if err != nil {
+		log.Println("Error when creating mongodb connection client", err)
+		disconnect()
+		return false
+	}
+
+	err = client.Connect(ctx)
+
+	if err != nil {
+		log.Println("Error when connecting to mongodb", err)
+		disconnect()
+		return false
+	}
+
+	err = client.Ping(ctx, nil)
+
+	if err != nil {
+		log.Println(err)
+		disconnect()
+		return false
+	}
+
+	return true
+}
+
 func CreateNewDocument(input interface{}, collectionName string) error {
 	collectionControl, disconnect, err := connect(collectionName)
 	defer disconnect()

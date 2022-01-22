@@ -5,6 +5,7 @@ import (
 	"ControlServer/graph/generated"
 	"ControlServer/internal/device"
 	"ControlServer/pkg/config"
+	"ControlServer/pkg/database"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -24,6 +25,11 @@ func readFromWebSocket(conn *websocket.Conn) {
 
 		if err != nil {
 			log.Println(err)
+			return
+		}
+
+		if !database.Ping() {
+			log.Println("No database connection!")
 			return
 		}
 
