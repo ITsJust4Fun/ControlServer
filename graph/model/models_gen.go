@@ -2,6 +2,33 @@
 
 package model
 
+type BaseBoardInfo struct {
+	ID                string `json:"id"`
+	DeviceID          string `json:"deviceId"`
+	Manufacturer      string `json:"manufacturer"`
+	Product           string `json:"product"`
+	Version           string `json:"version"`
+	SerialNumber      string `json:"serialNumber"`
+	AssetTag          string `json:"assetTag"`
+	LocationInChassis string `json:"locationInChassis"`
+	ChassisHandle     string `json:"chassisHandle"`
+	BoardType         string `json:"boardType"`
+}
+
+type BiosInfo struct {
+	ID                           string `json:"id"`
+	DeviceID                     string `json:"deviceId"`
+	Vendor                       string `json:"vendor"`
+	Version                      string `json:"version"`
+	StartingSegment              string `json:"startingSegment"`
+	ReleaseDate                  string `json:"releaseDate"`
+	RomSize                      string `json:"romSize"`
+	SystemBIOSMajorRelease       string `json:"systemBIOSMajorRelease"`
+	SystemBIOSMinorRelease       string `json:"systemBIOSMinorRelease"`
+	EmbeddedFirmwareMajorRelease string `json:"embeddedFirmwareMajorRelease"`
+	EmbeddedFirmwareMinorRelease string `json:"embeddedFirmwareMinorRelease"`
+}
+
 type Command struct {
 	DeviceID string `json:"deviceId"`
 	Command  string `json:"command"`
@@ -13,5 +40,89 @@ type CommandOutput struct {
 }
 
 type Device struct {
-	ID string `json:"_id"`
+	ID       string    `json:"id"`
+	Os       string    `json:"os"`
+	Volumes  []*string `json:"volumes"`
+	IsVM     bool      `json:"isVM"`
+	IsOnline bool      `json:"isOnline"`
+}
+
+type MemoryInfo struct {
+	ID                   string `json:"id"`
+	DeviceID             string `json:"deviceId"`
+	DeviceLocator        string `json:"deviceLocator"`
+	BankLocator          string `json:"bankLocator"`
+	Speed                string `json:"speed"`
+	Manufacturer         string `json:"manufacturer"`
+	SerialNumber         string `json:"serialNumber"`
+	AssetTagNumber       string `json:"assetTagNumber"`
+	PartNumber           string `json:"partNumber"`
+	Size                 string `json:"size"`
+	ExtendedSize         string `json:"extendedSize"`
+	ConfiguredClockSpeed string `json:"configuredClockSpeed"`
+}
+
+type OemStringsInfo struct {
+	ID       string `json:"id"`
+	DeviceID string `json:"deviceId"`
+	Count    string `json:"count"`
+	Values   string `json:"values"`
+}
+
+type PhysMemInfo struct {
+	ID                 string `json:"id"`
+	DeviceID           string `json:"deviceId"`
+	Use                string `json:"use"`
+	NumberDevices      string `json:"numberDevices"`
+	MaximumCapacity    string `json:"maximumCapacity"`
+	ExtMaximumCapacity string `json:"extMaximumCapacity"`
+}
+
+type ProcessorInfo struct {
+	ID                string `json:"id"`
+	DeviceID          string `json:"deviceId"`
+	Manufacturer      string `json:"manufacturer"`
+	Version           string `json:"version"`
+	CoreCount         string `json:"coreCount"`
+	CoreEnabled       string `json:"coreEnabled"`
+	ThreadCount       string `json:"threadCount"`
+	SocketDesignation string `json:"socketDesignation"`
+	ProcessorFamily   string `json:"processorFamily"`
+	ProcessorFamily2  string `json:"processorFamily2"`
+	ProcessorID       string `json:"processorID"`
+}
+
+type SysEnclosureInfo struct {
+	ID              string `json:"id"`
+	DeviceID        string `json:"deviceId"`
+	Manufacturer    string `json:"manufacturer"`
+	Version         string `json:"version"`
+	SerialNumber    string `json:"serialNumber"`
+	AssetTag        string `json:"assetTag"`
+	ContainedCount  string `json:"containedCount"`
+	ContainedLength string `json:"containedLength"`
+	SkuNumber       string `json:"skuNumber"`
+}
+
+type SysInfo struct {
+	ID           string `json:"id"`
+	DeviceID     string `json:"deviceId"`
+	Manufacturer string `json:"manufacturer"`
+	ProductName  string `json:"productName"`
+	Version      string `json:"version"`
+	SerialNumber string `json:"serialNumber"`
+	UUID         string `json:"uuid"`
+	SkuNumber    string `json:"skuNumber"`
+	Family       string `json:"family"`
+}
+
+type SysSlotInfo struct {
+	ID                 string `json:"id"`
+	DeviceID           string `json:"deviceId"`
+	SlotDesignation    string `json:"slotDesignation"`
+	SlotType           string `json:"slotType"`
+	SlotDataBusWidth   string `json:"slotDataBusWidth"`
+	SlotID             string `json:"slotID"`
+	SegmentGroupNumber string `json:"segmentGroupNumber"`
+	BusNumber          string `json:"busNumber"`
 }

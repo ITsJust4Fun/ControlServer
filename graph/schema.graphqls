@@ -3,7 +3,118 @@
 # https://gqlgen.com/getting-started/
 
 type Device {
-  _id: ID!
+  id: ID!
+  os: String!
+  volumes: [String]!
+  isVM: Boolean!
+  isOnline: Boolean!
+}
+
+type ProcessorInfo {
+  id: ID!
+  deviceId: ID!
+  manufacturer: String!
+  version: String!
+  coreCount: String!
+  coreEnabled: String!
+  threadCount: String!
+  socketDesignation: String!
+  processorFamily: String!
+  processorFamily2: String!
+  processorID: String!
+}
+
+type BiosInfo {
+  id: ID!
+  deviceId: ID!
+  vendor: String!
+  version: String!
+  startingSegment: String!
+  releaseDate: String!
+  romSize: String!
+  systemBIOSMajorRelease: String!
+  systemBIOSMinorRelease: String!
+  embeddedFirmwareMajorRelease: String!
+  embeddedFirmwareMinorRelease: String!
+}
+
+type SysInfo {
+  id: ID!
+  deviceId: ID!
+  manufacturer: String!
+  productName: String!
+  version: String!
+  serialNumber: String!
+  uuid: String!
+  skuNumber: String!
+  family: String!
+}
+
+type BaseBoardInfo {
+  id: ID!
+  deviceId: ID!
+  manufacturer: String!
+  product: String!
+  version: String!
+  serialNumber: String!
+  assetTag: String!
+  locationInChassis: String!
+  chassisHandle: String!
+  boardType: String!
+}
+
+type SysEnclosureInfo {
+  id: ID!
+  deviceId: ID!
+  manufacturer: String!
+  version: String!
+  serialNumber: String!
+  assetTag: String!
+  containedCount: String!
+  containedLength: String!
+  skuNumber: String!
+}
+
+type SysSlotInfo {
+  id: ID!
+  deviceId: ID!
+  slotDesignation: String!
+  slotType: String!
+  slotDataBusWidth: String!
+  slotID: String!
+  segmentGroupNumber: String!
+  busNumber: String!
+}
+
+type PhysMemInfo {
+  id: ID!
+  deviceId: ID!
+  use: String!
+  numberDevices: String!
+  maximumCapacity: String!
+  extMaximumCapacity: String!
+}
+
+type MemoryInfo {
+  id: ID!
+  deviceId: ID!
+  deviceLocator: String!
+  bankLocator: String!
+  speed: String!
+  manufacturer: String!
+  serialNumber: String!
+  assetTagNumber: String!
+  partNumber: String!
+  size: String!
+  extendedSize: String!
+  configuredClockSpeed: String!
+}
+
+type OemStringsInfo {
+  id: ID!
+  deviceId: ID!
+  count: String!
+  values: String!
 }
 
 input Command {
@@ -17,7 +128,16 @@ type CommandOutput {
 }
 
 type Query {
-  devices: [Device!]!
+  getDevices: [Device!]!
+  getProcessors(id: ID!): [ProcessorInfo!]!
+  getBios(id: ID!): [BiosInfo!]!
+  getSysInfo(id: ID!): [SysInfo!]!
+  getBaseBoards(id: ID!): [BaseBoardInfo!]!
+  getSysEnclosure(id: ID!): [SysEnclosureInfo!]!
+  getSysSlots(id: ID!): [SysSlotInfo!]!
+  getPhysMem(id: ID!): [PhysMemInfo!]!
+  getMemory(id: ID!): [MemoryInfo!]!
+  getOemStrings(id: ID!): [OemStringsInfo!]!
 }
 
 type Mutation {

@@ -24,11 +24,13 @@ func readFromWebSocket(conn *websocket.Conn) {
 		messageType, messageBytes, err := conn.ReadMessage()
 
 		if err != nil {
+			device.DisconnectDevice(conn)
 			log.Println(err)
 			return
 		}
 
 		if !database.Ping() {
+			device.DisconnectDevice(conn)
 			log.Println("No database connection!")
 			return
 		}
@@ -37,6 +39,7 @@ func readFromWebSocket(conn *websocket.Conn) {
 		err = json.Unmarshal(messageBytes, &result)
 
 		if err != nil {
+			device.DisconnectDevice(conn)
 			log.Println(err)
 			return
 		}
@@ -44,15 +47,17 @@ func readFromWebSocket(conn *websocket.Conn) {
 		method, ok := result["method"]
 
 		if !ok {
+			device.DisconnectDevice(conn)
 			log.Println("no method field")
 			return
 		}
 
 		switch method {
 		case "auth":
-			err := device.Auth(messageBytes, messageType, conn)
+			err = device.Auth(messageBytes, messageType, conn)
 
 			if err != nil {
+				device.DisconnectDevice(conn)
 				log.Println(err)
 				return
 			}
@@ -61,7 +66,8 @@ func readFromWebSocket(conn *websocket.Conn) {
 		default:
 			message := []byte("unknown method")
 
-			if err := conn.WriteMessage(messageType, message); err != nil {
+			if err = conn.WriteMessage(messageType, message); err != nil {
+				device.DisconnectDevice(conn)
 				log.Println(err)
 				return
 			}

@@ -168,7 +168,35 @@ func FindOne(input interface{}, filter interface{}, collectionName string) error
 	err = collectionControl.collection.FindOne(collectionControl.ctx, filter).Decode(input)
 
 	if err != nil {
-		log.Print("Error when searching", err)
+		return err
+	}
+
+	return nil
+}
+
+func FindMany(input interface{}, filter interface{}, collectionName string) error {
+	collectionControl, disconnect, err := connect(collectionName)
+	defer disconnect()
+
+	if err != nil {
+		return err
+	}
+
+	result, err := collectionControl.collection.Find(collectionControl.ctx, filter)
+
+	if err != nil {
+		log.Print("Error when find", err)
+		return err
+	}
+
+	defer func(result *mongo.Cursor, ctx context.Context) {
+		_ = result.Close(ctx)
+	}(result, collectionControl.ctx)
+
+	err = result.All(collectionControl.ctx, input)
+
+	if err != nil {
+		log.Print("Error when reading reports from cursor", err)
 		return err
 	}
 

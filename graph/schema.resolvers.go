@@ -6,16 +6,52 @@ package graph
 import (
 	"ControlServer/graph/generated"
 	"ControlServer/graph/model"
+	"ControlServer/internal/device"
 	"context"
-	"fmt"
 )
 
 func (r *mutationResolver) RunCommand(ctx context.Context, input model.Command) (*model.CommandOutput, error) {
 	return &model.CommandOutput{Output: "Noting"}, nil
 }
 
-func (r *queryResolver) Devices(ctx context.Context) ([]*model.Device, error) {
-	panic(fmt.Errorf("not implemented"))
+func (r *queryResolver) GetDevices(ctx context.Context) ([]*model.Device, error) {
+	return device.GetDevices()
+}
+
+func (r *queryResolver) GetProcessors(ctx context.Context, id string) ([]*model.ProcessorInfo, error) {
+	return device.GetProcessors(id)
+}
+
+func (r *queryResolver) GetBios(ctx context.Context, id string) ([]*model.BiosInfo, error) {
+	return device.GetBiosInfo(id)
+}
+
+func (r *queryResolver) GetSysInfo(ctx context.Context, id string) ([]*model.SysInfo, error) {
+	return device.GetSysInfo(id)
+}
+
+func (r *queryResolver) GetBaseBoards(ctx context.Context, id string) ([]*model.BaseBoardInfo, error) {
+	return device.GetBaseBoards(id)
+}
+
+func (r *queryResolver) GetSysEnclosure(ctx context.Context, id string) ([]*model.SysEnclosureInfo, error) {
+	return device.GetSysEnclosure(id)
+}
+
+func (r *queryResolver) GetSysSlots(ctx context.Context, id string) ([]*model.SysSlotInfo, error) {
+	return device.GetSysSlots(id)
+}
+
+func (r *queryResolver) GetPhysMem(ctx context.Context, id string) ([]*model.PhysMemInfo, error) {
+	return device.GetPhysMem(id)
+}
+
+func (r *queryResolver) GetMemory(ctx context.Context, id string) ([]*model.MemoryInfo, error) {
+	return device.GetMemory(id)
+}
+
+func (r *queryResolver) GetOemStrings(ctx context.Context, id string) ([]*model.OemStringsInfo, error) {
+	return device.GetOemStrings(id)
 }
 
 // Mutation returns generated.MutationResolver implementation.
