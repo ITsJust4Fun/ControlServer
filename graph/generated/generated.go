@@ -133,16 +133,16 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		GetBaseBoards   func(childComplexity int, id string) int
-		GetBios         func(childComplexity int, id string) int
-		GetDevices      func(childComplexity int) int
-		GetMemory       func(childComplexity int, id string) int
-		GetOemStrings   func(childComplexity int, id string) int
-		GetPhysMem      func(childComplexity int, id string) int
-		GetProcessors   func(childComplexity int, id string) int
-		GetSysEnclosure func(childComplexity int, id string) int
-		GetSysInfo      func(childComplexity int, id string) int
-		GetSysSlots     func(childComplexity int, id string) int
+		BaseBoards   func(childComplexity int, id string) int
+		Bios         func(childComplexity int, id string) int
+		Devices      func(childComplexity int) int
+		Memory       func(childComplexity int, id string) int
+		OemStrings   func(childComplexity int, id string) int
+		PhysMem      func(childComplexity int, id string) int
+		Processors   func(childComplexity int, id string) int
+		SysEnclosure func(childComplexity int, id string) int
+		SysInfo      func(childComplexity int, id string) int
+		SysSlots     func(childComplexity int, id string) int
 	}
 
 	SysEnclosureInfo struct {
@@ -185,16 +185,16 @@ type MutationResolver interface {
 	RunCommand(ctx context.Context, input model.Command) (*model.CommandOutput, error)
 }
 type QueryResolver interface {
-	GetDevices(ctx context.Context) ([]*model.Device, error)
-	GetProcessors(ctx context.Context, id string) ([]*model.ProcessorInfo, error)
-	GetBios(ctx context.Context, id string) ([]*model.BiosInfo, error)
-	GetSysInfo(ctx context.Context, id string) ([]*model.SysInfo, error)
-	GetBaseBoards(ctx context.Context, id string) ([]*model.BaseBoardInfo, error)
-	GetSysEnclosure(ctx context.Context, id string) ([]*model.SysEnclosureInfo, error)
-	GetSysSlots(ctx context.Context, id string) ([]*model.SysSlotInfo, error)
-	GetPhysMem(ctx context.Context, id string) ([]*model.PhysMemInfo, error)
-	GetMemory(ctx context.Context, id string) ([]*model.MemoryInfo, error)
-	GetOemStrings(ctx context.Context, id string) ([]*model.OemStringsInfo, error)
+	Devices(ctx context.Context) ([]*model.Device, error)
+	Processors(ctx context.Context, id string) ([]*model.ProcessorInfo, error)
+	Bios(ctx context.Context, id string) ([]*model.BiosInfo, error)
+	SysInfo(ctx context.Context, id string) ([]*model.SysInfo, error)
+	BaseBoards(ctx context.Context, id string) ([]*model.BaseBoardInfo, error)
+	SysEnclosure(ctx context.Context, id string) ([]*model.SysEnclosureInfo, error)
+	SysSlots(ctx context.Context, id string) ([]*model.SysSlotInfo, error)
+	PhysMem(ctx context.Context, id string) ([]*model.PhysMemInfo, error)
+	Memory(ctx context.Context, id string) ([]*model.MemoryInfo, error)
+	OemStrings(ctx context.Context, id string) ([]*model.OemStringsInfo, error)
 }
 
 type executableSchema struct {
@@ -651,120 +651,120 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ProcessorInfo.Version(childComplexity), true
 
-	case "Query.getBaseBoards":
-		if e.complexity.Query.GetBaseBoards == nil {
+	case "Query.baseBoards":
+		if e.complexity.Query.BaseBoards == nil {
 			break
 		}
 
-		args, err := ec.field_Query_getBaseBoards_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_baseBoards_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Query.GetBaseBoards(childComplexity, args["id"].(string)), true
+		return e.complexity.Query.BaseBoards(childComplexity, args["id"].(string)), true
 
-	case "Query.getBios":
-		if e.complexity.Query.GetBios == nil {
+	case "Query.bios":
+		if e.complexity.Query.Bios == nil {
 			break
 		}
 
-		args, err := ec.field_Query_getBios_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_bios_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Query.GetBios(childComplexity, args["id"].(string)), true
+		return e.complexity.Query.Bios(childComplexity, args["id"].(string)), true
 
-	case "Query.getDevices":
-		if e.complexity.Query.GetDevices == nil {
+	case "Query.devices":
+		if e.complexity.Query.Devices == nil {
 			break
 		}
 
-		return e.complexity.Query.GetDevices(childComplexity), true
+		return e.complexity.Query.Devices(childComplexity), true
 
-	case "Query.getMemory":
-		if e.complexity.Query.GetMemory == nil {
+	case "Query.memory":
+		if e.complexity.Query.Memory == nil {
 			break
 		}
 
-		args, err := ec.field_Query_getMemory_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_memory_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Query.GetMemory(childComplexity, args["id"].(string)), true
+		return e.complexity.Query.Memory(childComplexity, args["id"].(string)), true
 
-	case "Query.getOemStrings":
-		if e.complexity.Query.GetOemStrings == nil {
+	case "Query.oemStrings":
+		if e.complexity.Query.OemStrings == nil {
 			break
 		}
 
-		args, err := ec.field_Query_getOemStrings_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_oemStrings_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Query.GetOemStrings(childComplexity, args["id"].(string)), true
+		return e.complexity.Query.OemStrings(childComplexity, args["id"].(string)), true
 
-	case "Query.getPhysMem":
-		if e.complexity.Query.GetPhysMem == nil {
+	case "Query.physMem":
+		if e.complexity.Query.PhysMem == nil {
 			break
 		}
 
-		args, err := ec.field_Query_getPhysMem_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_physMem_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Query.GetPhysMem(childComplexity, args["id"].(string)), true
+		return e.complexity.Query.PhysMem(childComplexity, args["id"].(string)), true
 
-	case "Query.getProcessors":
-		if e.complexity.Query.GetProcessors == nil {
+	case "Query.processors":
+		if e.complexity.Query.Processors == nil {
 			break
 		}
 
-		args, err := ec.field_Query_getProcessors_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_processors_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Query.GetProcessors(childComplexity, args["id"].(string)), true
+		return e.complexity.Query.Processors(childComplexity, args["id"].(string)), true
 
-	case "Query.getSysEnclosure":
-		if e.complexity.Query.GetSysEnclosure == nil {
+	case "Query.sysEnclosure":
+		if e.complexity.Query.SysEnclosure == nil {
 			break
 		}
 
-		args, err := ec.field_Query_getSysEnclosure_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_sysEnclosure_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Query.GetSysEnclosure(childComplexity, args["id"].(string)), true
+		return e.complexity.Query.SysEnclosure(childComplexity, args["id"].(string)), true
 
-	case "Query.getSysInfo":
-		if e.complexity.Query.GetSysInfo == nil {
+	case "Query.sysInfo":
+		if e.complexity.Query.SysInfo == nil {
 			break
 		}
 
-		args, err := ec.field_Query_getSysInfo_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_sysInfo_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Query.GetSysInfo(childComplexity, args["id"].(string)), true
+		return e.complexity.Query.SysInfo(childComplexity, args["id"].(string)), true
 
-	case "Query.getSysSlots":
-		if e.complexity.Query.GetSysSlots == nil {
+	case "Query.sysSlots":
+		if e.complexity.Query.SysSlots == nil {
 			break
 		}
 
-		args, err := ec.field_Query_getSysSlots_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_sysSlots_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Query.GetSysSlots(childComplexity, args["id"].(string)), true
+		return e.complexity.Query.SysSlots(childComplexity, args["id"].(string)), true
 
 	case "SysEnclosureInfo.assetTag":
 		if e.complexity.SysEnclosureInfo.AssetTag == nil {
@@ -1142,16 +1142,16 @@ type CommandOutput {
 }
 
 type Query {
-  getDevices: [Device!]!
-  getProcessors(id: ID!): [ProcessorInfo!]!
-  getBios(id: ID!): [BiosInfo!]!
-  getSysInfo(id: ID!): [SysInfo!]!
-  getBaseBoards(id: ID!): [BaseBoardInfo!]!
-  getSysEnclosure(id: ID!): [SysEnclosureInfo!]!
-  getSysSlots(id: ID!): [SysSlotInfo!]!
-  getPhysMem(id: ID!): [PhysMemInfo!]!
-  getMemory(id: ID!): [MemoryInfo!]!
-  getOemStrings(id: ID!): [OemStringsInfo!]!
+  devices: [Device!]!
+  processors(id: ID!): [ProcessorInfo!]!
+  bios(id: ID!): [BiosInfo!]!
+  sysInfo(id: ID!): [SysInfo!]!
+  baseBoards(id: ID!): [BaseBoardInfo!]!
+  sysEnclosure(id: ID!): [SysEnclosureInfo!]!
+  sysSlots(id: ID!): [SysSlotInfo!]!
+  physMem(id: ID!): [PhysMemInfo!]!
+  memory(id: ID!): [MemoryInfo!]!
+  oemStrings(id: ID!): [OemStringsInfo!]!
 }
 
 type Mutation {
@@ -1195,7 +1195,7 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_getBaseBoards_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Query_baseBoards_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
@@ -1210,7 +1210,7 @@ func (ec *executionContext) field_Query_getBaseBoards_args(ctx context.Context, 
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_getBios_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Query_bios_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
@@ -1225,7 +1225,7 @@ func (ec *executionContext) field_Query_getBios_args(ctx context.Context, rawArg
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_getMemory_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Query_memory_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
@@ -1240,7 +1240,7 @@ func (ec *executionContext) field_Query_getMemory_args(ctx context.Context, rawA
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_getOemStrings_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Query_oemStrings_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
@@ -1255,7 +1255,7 @@ func (ec *executionContext) field_Query_getOemStrings_args(ctx context.Context, 
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_getPhysMem_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Query_physMem_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
@@ -1270,7 +1270,7 @@ func (ec *executionContext) field_Query_getPhysMem_args(ctx context.Context, raw
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_getProcessors_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Query_processors_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
@@ -1285,7 +1285,7 @@ func (ec *executionContext) field_Query_getProcessors_args(ctx context.Context, 
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_getSysEnclosure_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Query_sysEnclosure_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
@@ -1300,7 +1300,7 @@ func (ec *executionContext) field_Query_getSysEnclosure_args(ctx context.Context
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_getSysInfo_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Query_sysInfo_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
@@ -1315,7 +1315,7 @@ func (ec *executionContext) field_Query_getSysInfo_args(ctx context.Context, raw
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_getSysSlots_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Query_sysSlots_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
@@ -3545,7 +3545,7 @@ func (ec *executionContext) _ProcessorInfo_processorID(ctx context.Context, fiel
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Query_getDevices(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Query_devices(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -3563,7 +3563,7 @@ func (ec *executionContext) _Query_getDevices(ctx context.Context, field graphql
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetDevices(rctx)
+		return ec.resolvers.Query().Devices(rctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3580,7 +3580,7 @@ func (ec *executionContext) _Query_getDevices(ctx context.Context, field graphql
 	return ec.marshalNDevice2ᚕᚖControlServerᚋgraphᚋmodelᚐDeviceᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Query_getProcessors(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Query_processors(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -3597,7 +3597,7 @@ func (ec *executionContext) _Query_getProcessors(ctx context.Context, field grap
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Query_getProcessors_args(ctx, rawArgs)
+	args, err := ec.field_Query_processors_args(ctx, rawArgs)
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
@@ -3605,7 +3605,7 @@ func (ec *executionContext) _Query_getProcessors(ctx context.Context, field grap
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetProcessors(rctx, args["id"].(string))
+		return ec.resolvers.Query().Processors(rctx, args["id"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3622,7 +3622,7 @@ func (ec *executionContext) _Query_getProcessors(ctx context.Context, field grap
 	return ec.marshalNProcessorInfo2ᚕᚖControlServerᚋgraphᚋmodelᚐProcessorInfoᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Query_getBios(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Query_bios(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -3639,7 +3639,7 @@ func (ec *executionContext) _Query_getBios(ctx context.Context, field graphql.Co
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Query_getBios_args(ctx, rawArgs)
+	args, err := ec.field_Query_bios_args(ctx, rawArgs)
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
@@ -3647,7 +3647,7 @@ func (ec *executionContext) _Query_getBios(ctx context.Context, field graphql.Co
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetBios(rctx, args["id"].(string))
+		return ec.resolvers.Query().Bios(rctx, args["id"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3664,7 +3664,7 @@ func (ec *executionContext) _Query_getBios(ctx context.Context, field graphql.Co
 	return ec.marshalNBiosInfo2ᚕᚖControlServerᚋgraphᚋmodelᚐBiosInfoᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Query_getSysInfo(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Query_sysInfo(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -3681,7 +3681,7 @@ func (ec *executionContext) _Query_getSysInfo(ctx context.Context, field graphql
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Query_getSysInfo_args(ctx, rawArgs)
+	args, err := ec.field_Query_sysInfo_args(ctx, rawArgs)
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
@@ -3689,7 +3689,7 @@ func (ec *executionContext) _Query_getSysInfo(ctx context.Context, field graphql
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetSysInfo(rctx, args["id"].(string))
+		return ec.resolvers.Query().SysInfo(rctx, args["id"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3706,7 +3706,7 @@ func (ec *executionContext) _Query_getSysInfo(ctx context.Context, field graphql
 	return ec.marshalNSysInfo2ᚕᚖControlServerᚋgraphᚋmodelᚐSysInfoᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Query_getBaseBoards(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Query_baseBoards(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -3723,7 +3723,7 @@ func (ec *executionContext) _Query_getBaseBoards(ctx context.Context, field grap
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Query_getBaseBoards_args(ctx, rawArgs)
+	args, err := ec.field_Query_baseBoards_args(ctx, rawArgs)
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
@@ -3731,7 +3731,7 @@ func (ec *executionContext) _Query_getBaseBoards(ctx context.Context, field grap
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetBaseBoards(rctx, args["id"].(string))
+		return ec.resolvers.Query().BaseBoards(rctx, args["id"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3748,7 +3748,7 @@ func (ec *executionContext) _Query_getBaseBoards(ctx context.Context, field grap
 	return ec.marshalNBaseBoardInfo2ᚕᚖControlServerᚋgraphᚋmodelᚐBaseBoardInfoᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Query_getSysEnclosure(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Query_sysEnclosure(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -3765,7 +3765,7 @@ func (ec *executionContext) _Query_getSysEnclosure(ctx context.Context, field gr
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Query_getSysEnclosure_args(ctx, rawArgs)
+	args, err := ec.field_Query_sysEnclosure_args(ctx, rawArgs)
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
@@ -3773,7 +3773,7 @@ func (ec *executionContext) _Query_getSysEnclosure(ctx context.Context, field gr
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetSysEnclosure(rctx, args["id"].(string))
+		return ec.resolvers.Query().SysEnclosure(rctx, args["id"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3790,7 +3790,7 @@ func (ec *executionContext) _Query_getSysEnclosure(ctx context.Context, field gr
 	return ec.marshalNSysEnclosureInfo2ᚕᚖControlServerᚋgraphᚋmodelᚐSysEnclosureInfoᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Query_getSysSlots(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Query_sysSlots(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -3807,7 +3807,7 @@ func (ec *executionContext) _Query_getSysSlots(ctx context.Context, field graphq
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Query_getSysSlots_args(ctx, rawArgs)
+	args, err := ec.field_Query_sysSlots_args(ctx, rawArgs)
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
@@ -3815,7 +3815,7 @@ func (ec *executionContext) _Query_getSysSlots(ctx context.Context, field graphq
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetSysSlots(rctx, args["id"].(string))
+		return ec.resolvers.Query().SysSlots(rctx, args["id"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3832,7 +3832,7 @@ func (ec *executionContext) _Query_getSysSlots(ctx context.Context, field graphq
 	return ec.marshalNSysSlotInfo2ᚕᚖControlServerᚋgraphᚋmodelᚐSysSlotInfoᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Query_getPhysMem(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Query_physMem(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -3849,7 +3849,7 @@ func (ec *executionContext) _Query_getPhysMem(ctx context.Context, field graphql
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Query_getPhysMem_args(ctx, rawArgs)
+	args, err := ec.field_Query_physMem_args(ctx, rawArgs)
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
@@ -3857,7 +3857,7 @@ func (ec *executionContext) _Query_getPhysMem(ctx context.Context, field graphql
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetPhysMem(rctx, args["id"].(string))
+		return ec.resolvers.Query().PhysMem(rctx, args["id"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3874,7 +3874,7 @@ func (ec *executionContext) _Query_getPhysMem(ctx context.Context, field graphql
 	return ec.marshalNPhysMemInfo2ᚕᚖControlServerᚋgraphᚋmodelᚐPhysMemInfoᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Query_getMemory(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Query_memory(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -3891,7 +3891,7 @@ func (ec *executionContext) _Query_getMemory(ctx context.Context, field graphql.
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Query_getMemory_args(ctx, rawArgs)
+	args, err := ec.field_Query_memory_args(ctx, rawArgs)
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
@@ -3899,7 +3899,7 @@ func (ec *executionContext) _Query_getMemory(ctx context.Context, field graphql.
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetMemory(rctx, args["id"].(string))
+		return ec.resolvers.Query().Memory(rctx, args["id"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3916,7 +3916,7 @@ func (ec *executionContext) _Query_getMemory(ctx context.Context, field graphql.
 	return ec.marshalNMemoryInfo2ᚕᚖControlServerᚋgraphᚋmodelᚐMemoryInfoᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Query_getOemStrings(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Query_oemStrings(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -3933,7 +3933,7 @@ func (ec *executionContext) _Query_getOemStrings(ctx context.Context, field grap
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Query_getOemStrings_args(ctx, rawArgs)
+	args, err := ec.field_Query_oemStrings_args(ctx, rawArgs)
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
@@ -3941,7 +3941,7 @@ func (ec *executionContext) _Query_getOemStrings(ctx context.Context, field grap
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetOemStrings(rctx, args["id"].(string))
+		return ec.resolvers.Query().OemStrings(rctx, args["id"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -6627,7 +6627,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Query")
-		case "getDevices":
+		case "devices":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
 				defer func() {
@@ -6635,13 +6635,13 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_getDevices(ctx, field)
+				res = ec._Query_devices(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
 				return res
 			})
-		case "getProcessors":
+		case "processors":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
 				defer func() {
@@ -6649,13 +6649,13 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_getProcessors(ctx, field)
+				res = ec._Query_processors(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
 				return res
 			})
-		case "getBios":
+		case "bios":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
 				defer func() {
@@ -6663,13 +6663,13 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_getBios(ctx, field)
+				res = ec._Query_bios(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
 				return res
 			})
-		case "getSysInfo":
+		case "sysInfo":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
 				defer func() {
@@ -6677,13 +6677,13 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_getSysInfo(ctx, field)
+				res = ec._Query_sysInfo(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
 				return res
 			})
-		case "getBaseBoards":
+		case "baseBoards":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
 				defer func() {
@@ -6691,13 +6691,13 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_getBaseBoards(ctx, field)
+				res = ec._Query_baseBoards(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
 				return res
 			})
-		case "getSysEnclosure":
+		case "sysEnclosure":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
 				defer func() {
@@ -6705,13 +6705,13 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_getSysEnclosure(ctx, field)
+				res = ec._Query_sysEnclosure(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
 				return res
 			})
-		case "getSysSlots":
+		case "sysSlots":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
 				defer func() {
@@ -6719,13 +6719,13 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_getSysSlots(ctx, field)
+				res = ec._Query_sysSlots(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
 				return res
 			})
-		case "getPhysMem":
+		case "physMem":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
 				defer func() {
@@ -6733,13 +6733,13 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_getPhysMem(ctx, field)
+				res = ec._Query_physMem(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
 				return res
 			})
-		case "getMemory":
+		case "memory":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
 				defer func() {
@@ -6747,13 +6747,13 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_getMemory(ctx, field)
+				res = ec._Query_memory(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
 				return res
 			})
-		case "getOemStrings":
+		case "oemStrings":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
 				defer func() {
@@ -6761,7 +6761,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_getOemStrings(ctx, field)
+				res = ec._Query_oemStrings(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}

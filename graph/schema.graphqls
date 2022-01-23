@@ -128,16 +128,16 @@ type CommandOutput {
 }
 
 type Query {
-  getDevices: [Device!]!
-  getProcessors(id: ID!): [ProcessorInfo!]!
-  getBios(id: ID!): [BiosInfo!]!
-  getSysInfo(id: ID!): [SysInfo!]!
-  getBaseBoards(id: ID!): [BaseBoardInfo!]!
-  getSysEnclosure(id: ID!): [SysEnclosureInfo!]!
-  getSysSlots(id: ID!): [SysSlotInfo!]!
-  getPhysMem(id: ID!): [PhysMemInfo!]!
-  getMemory(id: ID!): [MemoryInfo!]!
-  getOemStrings(id: ID!): [OemStringsInfo!]!
+  devices: [Device!]!
+  processors(id: ID!): [ProcessorInfo!]!
+  bios(id: ID!): [BiosInfo!]!
+  sysInfo(id: ID!): [SysInfo!]!
+  baseBoards(id: ID!): [BaseBoardInfo!]!
+  sysEnclosure(id: ID!): [SysEnclosureInfo!]!
+  sysSlots(id: ID!): [SysSlotInfo!]!
+  physMem(id: ID!): [PhysMemInfo!]!
+  memory(id: ID!): [MemoryInfo!]!
+  oemStrings(id: ID!): [OemStringsInfo!]!
 }
 
 type Mutation {

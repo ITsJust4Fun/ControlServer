@@ -14,43 +14,43 @@ func (r *mutationResolver) RunCommand(ctx context.Context, input model.Command) 
 	return &model.CommandOutput{Output: "Noting"}, nil
 }
 
-func (r *queryResolver) GetDevices(ctx context.Context) ([]*model.Device, error) {
+func (r *queryResolver) Devices(ctx context.Context) ([]*model.Device, error) {
 	return device.GetDevices()
 }
 
-func (r *queryResolver) GetProcessors(ctx context.Context, id string) ([]*model.ProcessorInfo, error) {
+func (r *queryResolver) Processors(ctx context.Context, id string) ([]*model.ProcessorInfo, error) {
 	return device.GetProcessors(id)
 }
 
-func (r *queryResolver) GetBios(ctx context.Context, id string) ([]*model.BiosInfo, error) {
+func (r *queryResolver) Bios(ctx context.Context, id string) ([]*model.BiosInfo, error) {
 	return device.GetBiosInfo(id)
 }
 
-func (r *queryResolver) GetSysInfo(ctx context.Context, id string) ([]*model.SysInfo, error) {
+func (r *queryResolver) SysInfo(ctx context.Context, id string) ([]*model.SysInfo, error) {
 	return device.GetSysInfo(id)
 }
 
-func (r *queryResolver) GetBaseBoards(ctx context.Context, id string) ([]*model.BaseBoardInfo, error) {
+func (r *queryResolver) BaseBoards(ctx context.Context, id string) ([]*model.BaseBoardInfo, error) {
 	return device.GetBaseBoards(id)
 }
 
-func (r *queryResolver) GetSysEnclosure(ctx context.Context, id string) ([]*model.SysEnclosureInfo, error) {
+func (r *queryResolver) SysEnclosure(ctx context.Context, id string) ([]*model.SysEnclosureInfo, error) {
 	return device.GetSysEnclosure(id)
 }
 
-func (r *queryResolver) GetSysSlots(ctx context.Context, id string) ([]*model.SysSlotInfo, error) {
+func (r *queryResolver) SysSlots(ctx context.Context, id string) ([]*model.SysSlotInfo, error) {
 	return device.GetSysSlots(id)
 }
 
-func (r *queryResolver) GetPhysMem(ctx context.Context, id string) ([]*model.PhysMemInfo, error) {
+func (r *queryResolver) PhysMem(ctx context.Context, id string) ([]*model.PhysMemInfo, error) {
 	return device.GetPhysMem(id)
 }
 
-func (r *queryResolver) GetMemory(ctx context.Context, id string) ([]*model.MemoryInfo, error) {
+func (r *queryResolver) Memory(ctx context.Context, id string) ([]*model.MemoryInfo, error) {
 	return device.GetMemory(id)
 }
 
-func (r *queryResolver) GetOemStrings(ctx context.Context, id string) ([]*model.OemStringsInfo, error) {
+func (r *queryResolver) OemStrings(ctx context.Context, id string) ([]*model.OemStringsInfo, error) {
 	return device.GetOemStrings(id)
 }
 
