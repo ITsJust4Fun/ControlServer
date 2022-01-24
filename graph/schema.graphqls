@@ -118,8 +118,16 @@ type OemStringsInfo {
 }
 
 input Command {
-  deviceId: String!
+  deviceId: ID!
   command: String!
+}
+
+input Encode {
+  deviceId: ID!
+}
+
+input Decode {
+  deviceId: ID!
 }
 
 type CommandOutput {
@@ -142,4 +150,6 @@ type Query {
 
 type Mutation {
   runCommand(input: Command!): CommandOutput!
+  decode(input: Decode!): CommandOutput!
+  encode(input: Encode!): CommandOutput!
 }

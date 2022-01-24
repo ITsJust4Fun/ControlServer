@@ -6,12 +6,21 @@ package graph
 import (
 	"ControlServer/graph/generated"
 	"ControlServer/graph/model"
+	"ControlServer/internal/commands"
 	"ControlServer/internal/device"
 	"context"
 )
 
 func (r *mutationResolver) RunCommand(ctx context.Context, input model.Command) (*model.CommandOutput, error) {
-	return &model.CommandOutput{Output: "Noting"}, nil
+	return commands.RunCommand(input)
+}
+
+func (r *mutationResolver) Decode(ctx context.Context, input model.Decode) (*model.CommandOutput, error) {
+	return commands.Decode(input)
+}
+
+func (r *mutationResolver) Encode(ctx context.Context, input model.Encode) (*model.CommandOutput, error) {
+	return commands.Encode(input)
 }
 
 func (r *queryResolver) Devices(ctx context.Context) ([]*model.Device, error) {

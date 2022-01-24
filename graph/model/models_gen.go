@@ -39,12 +39,20 @@ type CommandOutput struct {
 	Output string `json:"output"`
 }
 
+type Decode struct {
+	DeviceID string `json:"deviceId"`
+}
+
 type Device struct {
 	ID       string    `json:"id"`
 	Os       string    `json:"os"`
 	Volumes  []*string `json:"volumes"`
 	IsVM     bool      `json:"isVM"`
 	IsOnline bool      `json:"isOnline"`
+}
+
+type Encode struct {
+	DeviceID string `json:"deviceId"`
 }
 
 type MemoryInfo struct {

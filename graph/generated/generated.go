@@ -99,6 +99,8 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
+		Decode     func(childComplexity int, input model.Decode) int
+		Encode     func(childComplexity int, input model.Encode) int
 		RunCommand func(childComplexity int, input model.Command) int
 	}
 
@@ -183,6 +185,8 @@ type ComplexityRoot struct {
 
 type MutationResolver interface {
 	RunCommand(ctx context.Context, input model.Command) (*model.CommandOutput, error)
+	Decode(ctx context.Context, input model.Decode) (*model.CommandOutput, error)
+	Encode(ctx context.Context, input model.Encode) (*model.CommandOutput, error)
 }
 type QueryResolver interface {
 	Devices(ctx context.Context) ([]*model.Device, error)
@@ -491,6 +495,30 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.MemoryInfo.Speed(childComplexity), true
+
+	case "Mutation.decode":
+		if e.complexity.Mutation.Decode == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_decode_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.Decode(childComplexity, args["input"].(model.Decode)), true
+
+	case "Mutation.encode":
+		if e.complexity.Mutation.Encode == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_encode_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.Encode(childComplexity, args["input"].(model.Encode)), true
 
 	case "Mutation.runCommand":
 		if e.complexity.Mutation.RunCommand == nil {
@@ -1132,8 +1160,16 @@ type OemStringsInfo {
 }
 
 input Command {
-  deviceId: String!
+  deviceId: ID!
   command: String!
+}
+
+input Encode {
+  deviceId: ID!
+}
+
+input Decode {
+  deviceId: ID!
 }
 
 type CommandOutput {
@@ -1156,6 +1192,8 @@ type Query {
 
 type Mutation {
   runCommand(input: Command!): CommandOutput!
+  decode(input: Decode!): CommandOutput!
+  encode(input: Encode!): CommandOutput!
 }
 `, BuiltIn: false},
 }
@@ -1164,6 +1202,36 @@ var parsedSchema = gqlparser.MustLoadSchema(sources...)
 // endregion ************************** generated!.gotpl **************************
 
 // region    ***************************** args.gotpl *****************************
+
+func (ec *executionContext) field_Mutation_decode_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.Decode
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNDecode2ControlServerᚋgraphᚋmodelᚐDecode(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_encode_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.Encode
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNEncode2ControlServerᚋgraphᚋmodelᚐEncode(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
 
 func (ec *executionContext) field_Mutation_runCommand_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
@@ -2794,6 +2862,90 @@ func (ec *executionContext) _Mutation_runCommand(ctx context.Context, field grap
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return ec.resolvers.Mutation().RunCommand(rctx, args["input"].(model.Command))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.CommandOutput)
+	fc.Result = res
+	return ec.marshalNCommandOutput2ᚖControlServerᚋgraphᚋmodelᚐCommandOutput(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_decode(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_decode_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().Decode(rctx, args["input"].(model.Decode))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.CommandOutput)
+	fc.Result = res
+	return ec.marshalNCommandOutput2ᚖControlServerᚋgraphᚋmodelᚐCommandOutput(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_encode(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_encode_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().Encode(rctx, args["input"].(model.Encode))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -6074,7 +6226,7 @@ func (ec *executionContext) unmarshalInputCommand(ctx context.Context, obj inter
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deviceId"))
-			it.DeviceID, err = ec.unmarshalNString2string(ctx, v)
+			it.DeviceID, err = ec.unmarshalNID2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -6083,6 +6235,52 @@ func (ec *executionContext) unmarshalInputCommand(ctx context.Context, obj inter
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("command"))
 			it.Command, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputDecode(ctx context.Context, obj interface{}) (model.Decode, error) {
+	var it model.Decode
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "deviceId":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deviceId"))
+			it.DeviceID, err = ec.unmarshalNID2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputEncode(ctx context.Context, obj interface{}) (model.Encode, error) {
+	var it model.Encode
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "deviceId":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deviceId"))
+			it.DeviceID, err = ec.unmarshalNID2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -6427,6 +6625,16 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			out.Values[i] = graphql.MarshalString("Mutation")
 		case "runCommand":
 			out.Values[i] = ec._Mutation_runCommand(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "decode":
+			out.Values[i] = ec._Mutation_decode(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "encode":
+			out.Values[i] = ec._Mutation_encode(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -7370,6 +7578,11 @@ func (ec *executionContext) marshalNCommandOutput2ᚖControlServerᚋgraphᚋmod
 	return ec._CommandOutput(ctx, sel, v)
 }
 
+func (ec *executionContext) unmarshalNDecode2ControlServerᚋgraphᚋmodelᚐDecode(ctx context.Context, v interface{}) (model.Decode, error) {
+	res, err := ec.unmarshalInputDecode(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) marshalNDevice2ᚕᚖControlServerᚋgraphᚋmodelᚐDeviceᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Device) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
@@ -7422,6 +7635,11 @@ func (ec *executionContext) marshalNDevice2ᚖControlServerᚋgraphᚋmodelᚐDe
 		return graphql.Null
 	}
 	return ec._Device(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNEncode2ControlServerᚋgraphᚋmodelᚐEncode(ctx context.Context, v interface{}) (model.Encode, error) {
+	res, err := ec.unmarshalInputEncode(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalNID2string(ctx context.Context, v interface{}) (string, error) {

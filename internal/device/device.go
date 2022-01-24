@@ -146,6 +146,11 @@ type OemStringsInfo struct {
 	Values   string             `json:"values" bson:"values"`
 }
 
+type Token struct {
+	Method string `json:"method"`
+	Token  string `json:"token"`
+}
+
 var onlineSockets = make(map[*websocket.Conn]*Device)
 
 func Auth(messageBytes []byte, messageType int, conn *websocket.Conn) error {
@@ -208,9 +213,16 @@ func Auth(messageBytes []byte, messageType int, conn *websocket.Conn) error {
 	}
 
 	ConnectDevice(conn, &authRequest.DeviceInfo)
-	message := []byte(authRequest.DeviceInfo.Token)
 
-	if err = conn.WriteMessage(messageType, message); err != nil {
+	token := Token{"token", authRequest.DeviceInfo.Token}
+	jsonToken, err := json.Marshal(token)
+
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+
+	if err = conn.WriteMessage(messageType, jsonToken); err != nil {
 		log.Println(err)
 		return err
 	}
@@ -355,6 +367,16 @@ func (device *Device) IsOnline() bool {
 	}
 
 	return false
+}
+
+func (device *Device) GetConnection() *websocket.Conn {
+	for Connection, onlineSocket := range onlineSockets {
+		if device.ID == onlineSocket.ID {
+			return Connection
+		}
+	}
+
+	return nil
 }
 
 func GetDevices() ([]*model.Device, error) {
